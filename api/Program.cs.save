@@ -1,0 +1,42 @@
+using System.Text.Json;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Swagger + CORS
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
+    p.WithOrigins("http://localhost:5173","http://localhost:5174","http://localhost:5175")
+     .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
+app.UseCors();
+
+// БАЗОВАЯ МАРШРУТИЗАЦИЯ (ЛР-2)
+app.MapGet("/api/ping", () => Results.Ok(new { ok = true, ts = DateTimeOffset.UtcNow }));
+
+int N = 16;
+float[] heat = new float[N*N];
+var cfg = new { n = N, decay = 0.95, periodMs = 150 };
+
+app.MapGet("/api/heat", () => Results.Ok(new { n = N, grid = heat, ts = DateTimeOffset.UtcNow }));
+
+app.MapPost("/api/heat", async (HttpRequest req) =>
+{
+    using var doc = await JsonDocument.ParseAsync(req.Body);
+    if (doc.RootElement.TryGetProperty("grid", out var g) && g.ValueKind == JsonValueKind.Array)
+    {
+        int i = 0;
+        foreach (var v in g.EnumerateArray()) { if (i >= heat.Length) break; heat[i++] = (float)v.GetDouble(); }
+        return Results.Ok(new { ok = true, updated = Math.Min(i, heat.Length) });
+    }
+    return Results.BadRequest(new { ok = false, error = "grid is required" });
+});
+
+app.MapGet("/api/config", () => Results.Ok(cfg));
+app.MapPut("/api/config", (HttpRequest req) => Results.Ok(new { ok = true }));
+app.MapGet("/api/metrics", () => Results.Ok(new { requests = Environment.TickCount64 }));
+
+app.Run();

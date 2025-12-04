@@ -1,0 +1,17 @@
+
+
+.DS_Store
+node_modules/
+web/.vite/
+web/dist/
+node_modules/
+web/.vite/
+web/dist/
+api/bin/
+api/obj/
+*.user
+*.suo
+
+.vscode/
+.idea/
+node_modules

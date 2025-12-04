@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asset Similarity</title>
+    <link rel="icon" href="/brand/favicon.svg">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="image" href="/bg/fon.webp" imagesrcset="/bg/fon.webp 1x" imagesizes="100vw">
+    <style>
+
+      html, body { height: 100%; }
+
+      :root {
+        --bg-grad-a: radial-gradient(60% 60% at 10% 10%, rgba(52,211,153,0.10), transparent 60%);
+        --bg-grad-b: radial-gradient(50% 50% at 90% 80%, rgba(96,165,250,0.10), transparent 60%);
+      }
+      body {
+        background-color: #0a0a0b;
+        background-image: var(--bg-grad-a), var(--bg-grad-b), url('/bg/fon.webp');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+      }
+
+      @supports (background-image: image-set(url('/bg/fon.webp') 1x)) {
+        body {
+          background-image: var(--bg-grad-a), var(--bg-grad-b), image-set(
+            url('/bg/fon.webp') type('image/webp') 1x,
+          );
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

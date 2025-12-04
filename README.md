@@ -1,1 +1,1 @@
-# Unity_pp
+ FullStack — Lab2 (API Swagger + базовые маршруты)
